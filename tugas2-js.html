@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUGAS 2 JAVASCRIPT</title>
+</head>
+<body>
+    <script>
+        // Judul kolom menggunakan thead
+        // Isi data-dattanya gunakan tbody
+        // Nama Pegawai, Umur, Jabatan, Status
+        // Gaji Pokok (if): Manajer = 15jt, Asisten Manajer = 10jt, Staff = 5jt
+        // Tunjangan jabatan: 15% dari gapok
+        // BPJS: 10 dari gapok
+        // Tunjangan Keluarga (ternary): dilihat dari status yg sudah menikah = 20% dari gapok
+        // Total Gaji: jumlahkan seluruh element gaji (gunakan tfoot)
+
+        // // Menanyakan berapa jumlah pegawai yg akan diinput
+        let jumlahPegawai = prompt("Masukkan jumlah pegawai yang akan di input!");
+        jumlahPegawai = parseInt(jumlahPegawai);
+
+        // Tabel Awal
+        document.write("<h1>Data Pegawai</h1>");
+        document.write("<table border='1' cellpadding='5' cellspacing='0'>");
+        // Bagian head
+        document.write("<thead>");
+        document.write("<tr><th>No</th><th>Nama</th><th>Umur</th><th>Jabatan</th><th>Status</th><th>Gaji Pokok</th><th>Tunjangan Jabatan</th><th>BPJS</th><th>Tunjangan Keluarga</th><th>Total Gaji</th></tr>");
+        document.write("</thead>");
+
+        // Bagian body
+        document.write("<tbody>")
+
+        // variabel total keseluruhan
+        let totalGapok = 0;
+        let totalTunjangan = 0;
+        let totalBpjs = 0;
+        let totalKeluarga = 0;
+        let grandTotal = 0;
+
+        // Loop input pegawai 
+        for (let i = 1; i <= jumlahPegawai; i++) {
+            let nama = prompt("Nama Pegawai " + i + ":");
+            let umur = prompt("Umur Pegawai " + i + ":");
+            let jabatan = prompt("Jabatan (Manajer / Asisten Manajer / Staff):");
+            let status = prompt("Status (Menikah / Belum):");
+
+            //Menghitung gaji pokok
+            let gapok = 0;
+            if (jabatan == "Manajer") gapok = 15000000;
+            else if (jabatan == "Asisten Manajer") gapok = 10000000;
+            else gapok = 5000000;
+
+            // Menghitung Tunjangan
+            let tunjanganJabatan = 0.15 * gapok;
+            let bpjs = 0.10 * gapok;
+            let tunjanganKeluarga = (status == "Menikah") ? 0.20 * gapok : 0;
+
+            // Total gaji
+            let totalGaji = gapok + tunjanganJabatan + bpjs + tunjanganKeluarga;
+
+            // Tambahkkkan ke total keseluruhan
+            totalGapok += gapok;
+            totalTunjangan += tunjanganJabatan;
+            totalBpjs += bpjs;
+            totalKeluarga += tunjanganKeluarga;
+            grandTotal += totalGaji;
+
+            // cetak baris data pegawai
+            document.write("<tr>" +
+                "<td>" + i + "</td>" +
+                "<td>" + nama + "</td>" +
+                "<td>" + umur + "</td>" +
+                "<td>" + jabatan + "</td>" +
+                "<td>" + status + "</td>" +
+                "<td>" + gapok + "</td>" +
+                "<td>" + tunjanganJabatan + "</td>" +
+                "<td>" + bpjs + "</td>" +
+                "<td>" + tunjanganKeluarga + "</td>" +
+                "<td>" + totalGaji + "</td>" +
+            "</tr>");
+        }
+        document.write("</tbody>");
+
+        // Footer total
+        document.write("<tfoot>");
+        document.write("<tr>" +
+            "<td colspan='5'><b>Total</b></td>" + // gabung 5 kolom pertama jadi label "Total"
+            "<td>" + totalGapok + "</td>" +
+            "<td>" + totalTunjangan + "</td>" +
+            "<td>" + totalBpjs + "</td>" +
+            "<td>" + totalKeluarga + "</td>" +
+            "<td>" + grandTotal + "</td>" +
+        "</tr>");
+        document.write("</tfoot>");
+        document.write("</table>");
+      
+
+    </script>
+    
+</body>
+</html>

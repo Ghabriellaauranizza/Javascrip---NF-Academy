@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Produk</title>
+    <style>
+        body {
+            background-color: whitesmoke;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+       .container {
+        background: white;
+        padding: 32px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(128, 128, 128, 0.497);
+       } 
+
+       h1 {
+        color: #2A2A2A;
+        text-align: center;
+        margin-bottom: 35px;
+       }
+
+       .form-section {
+        background: whitesmoke;
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+       }
+
+       .form-group {
+        margin-bottom: 15px;
+       }
+
+       label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: rgb(85, 85, 85);
+       }
+
+       input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid whitesmoke;
+        border-radius: 8px;
+        font-size: 14px;
+       }
+
+       button {
+        background-color: cornflowerblue;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+       }
+       
+       button:hover {
+        background: blue;
+       }
+
+       .delete-btn {
+        background: #d45562;
+       }
+
+       .delete-btn:hover {
+        background: red;
+       }
+
+       .product-list {
+        margin-top: 20px;
+       }
+
+       .product-item {
+        background: white;
+        border: 1px solid rgb(217, 217, 217);
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+       }
+
+       .product-info {
+        flex: 1;
+       }
+       
+       .product-action {
+        display: flex;
+        gap: 10px;
+       }
+
+       .total-section {
+        background: whitesmoke;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+       }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>APLIKASI MANAJEMEN PRODUK</h1>
+
+        <!-- FORM TAMBAH PRODUK -->
+        <div class="form-sectiom">
+            <h3>Tambah Produk Baru</h3>
+            <div class="form-group">
+                <label for="inputNama">Nama Produk:</label>
+                <input type="text" id="inputNama" placeholder="Masukkan nama produk">
+            </div>
+            <div class="form-group">
+                <label for="inputHarga">Harga Rp:</label>
+                <input type="number" id="inputHarga" placeholder="Masukkan harga produk">
+            </div>
+            <button onclick="tambahProduk()">Tambahkan Produk</button>
+        </div>
+
+        <!-- FORM MANAJEMEN PRODUK -->
+        <div class="form-section">
+            <h3>Manajemen Produk</h3>
+            <button onclick="tampilkanSemuaProduk()">Tampilkan Semua Produk</button>
+            <button onclick="hapusProduk()">Hapus Produk</button>
+            <button class="delete-btn" onclick="hapusSemuaProduk()">Hapus Semua Produk</button>
+        </div>
+        
+        <div class="total-section">
+            <div>Total Produk: <span id="totalProduk">0</span></div>
+            <div>Total Nilai: Rp <span id="totalNilai">0</span></div>
+        </div>
+
+        <div class="product-list">
+            <h3>Daftar Produk</h3>
+            <div id="productContainer">
+                <p style="text-align: center; color: rgb(89, 89, 89);">Belum ada produk. Silahkan tambahkan produk baru!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Produk
+        let produkList = [
+            {id: 1, nama: "Laptop", harga: 15000000},
+            {id: 2, nama: "Smartphone", harga: 8000000}
+        ];
+
+        // Menampilkan daftar produk minimal 5 kode
+        let eventHandler = {
+            tampilkan: function() {
+                updateDisplay();
+                updateTotal();
+            }
+        };
+
+        // Menambahkan produk dengan spread operator
+        function tambahProduk(id, nama, harga) {
+            //Dipanggil dari form
+            if (arguments.length === 0) {
+                const inputNama = document.getElementById('inputNama').value;
+                const inputHarga = parseInt(document.getElementById('inputHarga').value);
+
+                if (!inputNama || !inputHarga) {
+                    alert('Mohon isi nama dan harga produk');
+                    return;
+                }
+
+                const newId = produkList.length > 0 ? Math.max(...produkList.map(p => p.id)) + 1 : 1;
+                const produkBaru = {id: newId, nama: inputNama, harga: inputHarga};
+                produkList = [...produkList, produkBaru];
+
+                // reset form
+                document.getElementById('inputNama').value = '';
+                document.getElementById('inputHarga').value = '';
+            } else {
+                // Dipanggil dengan parameter
+                const produkBaru = {id, nama, harga};
+                produkList = [...produkList, produkBaru];
+            }
+
+            eventHandler.tampilkan();
+            console.log('Produk berhasil ditambahkan:', produkList);
+        }
+
+        // Menghapus produk dengan rest parameter
+        function hapusProduk(...ids) {
+            if (ids.length === 0) {
+                // menghapus produk terakhir jika tidak ada ID yang diberikan
+                if (produkList.length > 0) {
+                    const produkTerhapus = produkList.pop();
+                    console.log('Produk terhapus:', produkTerhapus)
+                    eventHandler.tampilkan();
+                } else {
+                    alert('Tidak ada produk untuk dihapus');
+                }
+            } else {
+                // Menghapus produkk berdasarkkan ID yang diberikan
+                ids.forEach(id => {
+                    produkList = produkList.filter(produk => produk.id !== id);
+                });
+                eventHandler.tampilkan();
+                console.log('Produk dengan ID', ids, 'telah dihapus');
+            }
+        }
+
+        // Menampilkan semua produk dengan destructing
+        function tampilkanSemuaProduk() {
+            console.log('~~~ DAFTAR SEMUA PRODUK ~~~');
+            produkList.forEach(produk => {
+                const {id, nama, harga} = produk; // destucting
+                console.log(`ID: ${id}, Nama: ${nama}, Harga: ${harga.toLocaleString()}`);
+            });
+            eventHandler.tampilkan();
+        }
+
+        // Fungsi untuk menghapus semua produk
+        function hapusSemuaProduk() {
+            if (confirm('Apakah anda ingin menghapus semua produk?')) {
+                produkList = [];
+                eventHandler.tampilkan();
+                console.log('Semua produk telah dihapus');
+            }
+        }
+
+        // Fungsi untuk mengupdate tampilan
+        function updateDisplay() {
+            const container = document.getElementById('productContainer');
+
+            if (produkList.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666">Belum ada produk. Silahkan tambahkan produk baru</p>';
+                return;
+            }
+
+            let html = '';
+            produkList.forEach(produk => {
+                const {id, nama, harga} = produk;
+                html += `
+                    <div class="product-item">
+                        <div class="product-info">
+                            <strong>${nama}</strong><br>
+                            <small>ID: ${id} | Harga: Rp ${harga.toLocaleString()}</small>
+                        </div>
+                        <div class="product-action">
+                            <button onclick="hapusProduk(${id})" class="delete-btn">Hapus</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Fungsi untuk mengupdate total
+        function updateTotal() {
+            const totalProduk = produkList.length;
+            const totalNilai = produkList.reduce((total, produk) => total + produk.harga, 0);
+            
+            document.getElementById('totalProduk').textContent = totalProduk;
+            document.getElementById('totalNilai').textContent = totalNilai.toLocaleString();
+        }
+
+        // Inisialisasi tampilan saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            eventHandler.tampilkan();
+
+            // Demo penggunaan fungsi
+            console.log('~~~ DEMO SISTEM MANAJEMEN PRODUK ~~~');
+
+            // Menambahkan produk dengan parameter
+            tambahProduk(3, "Tablet", 8000000);
+
+            // Menampilkan semua produk
+            tampilkanSemuaProduk();
+
+        });
+
+        // Event listener untuk enter key pada input
+        document.getElementById('inputNama').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('inputHarga').focus();
+            }
+        });
+
+        document.getElementById('inputHarga').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                tambahProduk();
+            }
+        });
+
+    </script>
+    
+</body>
+</html>
